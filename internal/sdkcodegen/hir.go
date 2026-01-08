@@ -11,13 +11,17 @@ type hir struct {
 type topic struct {
 	models []apiModel
 	calls  []apiCall
+
+	// TODO: retain source order
+	// map[languageTag][]snippet
+	inlineCodeSections map[string][]string
 }
 
 type visibility int
 
 const (
-	visibilityPrivate visibility = iota + 1
-	visibilityPublic
+	visibilityPrivate visibility = 1
+	visibilityPublic  visibility = 2
 )
 
 // A model used by the APIs.
@@ -43,10 +47,11 @@ type apiModelField struct {
 type apiMethod int
 
 const (
-	apiMethodUnknown apiMethod = iota
-	apiMethodGET
-	apiMethodPOSTJSON
-	apiMethodPOSTMedia
+	apiMethodUnknown   apiMethod = 0
+	apiMethodGET       apiMethod = 1
+	apiMethodGETBinary apiMethod = 2
+	apiMethodPOSTJSON  apiMethod = 3
+	apiMethodPOSTMedia apiMethod = 4
 )
 
 // An API call.

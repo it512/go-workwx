@@ -259,13 +259,13 @@ type SizeType int
 
 const (
 	// SizeTypeMini 171 x 171
-	SizeTypeMini SizeType = iota + 1
+	SizeTypeMini SizeType = 1
 	// SizeTypeSmall 399 x 399
-	SizeTypeSmall
+	SizeTypeSmall SizeType = 2
 	// SizeTypeMedium 741 x 741
-	SizeTypeMedium
+	SizeTypeMedium SizeType = 3
 	// SizeTypeLarge 2052 x 2052
-	SizeTypeLarge
+	SizeTypeLarge SizeType = 4
 )
 
 // reqUserJoinQrcode 获取加入企业二维码 请求
@@ -588,9 +588,10 @@ type BatchListExternalContactsResp struct {
 
 // reqExternalContactBatchList 批量获取客户详情
 type reqExternalContactBatchList struct {
-	UserID string `json:"userid"`
-	Cursor string `json:"cursor"`
-	Limit  int    `json:"limit"`
+	UserID     string   `json:"userid,omitempty"`
+	UserIDList []string `json:"userid_list,omitempty"`
+	Cursor     string   `json:"cursor"`
+	Limit      int      `json:"limit"`
 }
 
 var _ bodyer = reqExternalContactBatchList{}
@@ -2201,4 +2202,82 @@ func (x reqOASetOneUserVacationQuota) intoBody() ([]byte, error) {
 // respOASetOneUserVacationQuota 修改成员假期余额 响应
 type respOASetOneUserVacationQuota struct {
 	respCommon
+}
+
+// reqAgentGet 获取应用详情请求
+type reqAgentGet struct {
+	AgentID int64
+}
+
+var _ urlValuer = reqAgentGet{}
+
+func (x reqAgentGet) intoURLValues() url.Values {
+	return url.Values{
+		"agentid": {strconv.FormatInt(x.AgentID, 10)},
+	}
+}
+
+// respAgentGet 获取应用详情响应
+type respAgentGet struct {
+	respCommon
+
+	AgentID                 int64               `json:"agentid"`
+	Name                    string              `json:"name"`
+	SquareLogoURL           string              `json:"square_logo_url"`
+	Description             string              `json:"description"`
+	AllowUserInfos          AgentAllowUserInfos `json:"allow_userinfos"`
+	AllowPartys             AgentAllowPartys    `json:"allow_partys"`
+	AllowTags               AgentAllowTags      `json:"allow_tags"`
+	Close                   int                 `json:"close"`
+	RedirectDomain          string              `json:"redirect_domain"`
+	ReportLocationFlag      int                 `json:"report_location_flag"`
+	IsReportEnter           int                 `json:"isreportenter"`
+	HomeURL                 string              `json:"home_url"`
+	CustomizedPublishStatus int                 `json:"customized_publish_status"`
+}
+
+// AgentAllowUserInfos 应用可见范围（人员）
+type AgentAllowUserInfos struct {
+	User []AgentAllowUser `json:"user"`
+}
+
+// AgentAllowUser 应用可见用户
+type AgentAllowUser struct {
+	UserID string `json:"userid"`
+}
+
+// AgentAllowPartys 应用可见范围（部门）
+type AgentAllowPartys struct {
+	PartyID []int64 `json:"partyid"`
+}
+
+// AgentAllowTags 应用可见范围（标签）
+type AgentAllowTags struct {
+	TagID []int64 `json:"tagid"`
+}
+
+// reqAgentList 获取应用列表请求
+type reqAgentList struct{}
+
+var _ urlValuer = reqAgentList{}
+
+func (x reqAgentList) intoURLValues() url.Values {
+	return url.Values{}
+}
+
+// AgentItem 应用列表项
+type AgentItem struct {
+	// AgentID 企业应用id
+	AgentID int64 `json:"agentid"`
+	// Name 企业应用名称
+	Name string `json:"name"`
+	// SquareLogoURL 企业应用方形头像url
+	SquareLogoURL string `json:"square_logo_url"`
+}
+
+// respAgentList 获取应用列表响应
+type respAgentList struct {
+	respCommon
+
+	AgentList []AgentItem `json:"agentlist"`
 }

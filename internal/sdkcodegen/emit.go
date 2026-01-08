@@ -57,6 +57,24 @@ func (e *goEmitter) Finalize() error {
 	return nil
 }
 
+func (e *goEmitter) emitInlineCodeSections(
+	lang string,
+	m map[string][]string,
+) error {
+	langSnippets := m[lang]
+	if len(langSnippets) > 0 {
+		e.e("\n")
+
+		for _, s := range langSnippets {
+			e.e("%s\n", s)
+		}
+
+		e.e("\n")
+	}
+
+	return nil
+}
+
 func (e *goEmitter) emitTopic(x *topic) error {
 	for i := range x.models {
 		err := e.emitModel(&x.models[i])
@@ -74,7 +92,7 @@ func (e *goEmitter) emitTopic(x *topic) error {
 		e.e("\n")
 	}
 
-	return nil
+	return e.emitInlineCodeSections("go", x.inlineCodeSections)
 }
 
 func (e *goEmitter) emitModel(x *apiModel) error {
@@ -93,18 +111,7 @@ func (e *goEmitter) emitModel(x *apiModel) error {
 
 	e.e("}\n")
 
-	golangSnippets := x.inlineCodeSections["go"]
-	if len(golangSnippets) > 0 {
-		e.e("\n")
-
-		for _, s := range golangSnippets {
-			e.e("%s\n", s)
-		}
-
-		e.e("\n")
-	}
-
-	return nil
+	return e.emitInlineCodeSections("go", x.inlineCodeSections)
 }
 
 func (e *goEmitter) emitModelField(x *apiModelField) error {
@@ -162,6 +169,8 @@ func (e *goEmitter) emitAPICall(x *apiCall) error {
 	switch x.method {
 	case apiMethodGET:
 		execFnName = "executeQyapiGet"
+	case apiMethodGETBinary:
+		execFnName = "executeQyapiGetBinary"
 	case apiMethodPOSTJSON:
 		execFnName = "executeQyapiJSONPost"
 	case apiMethodPOSTMedia:
@@ -173,14 +182,20 @@ func (e *goEmitter) emitAPICall(x *apiCall) error {
 	// TODO: override the receiver of method
 	e.emitDoc(ident, x.doc)
 	e.e("func (c *WorkwxApp) %s(req %s) (%s, error) {\n", ident, x.reqType, x.respType)
-	e.e("var resp %s\n", x.respType)
-	e.e("err := %s(c, \"%s\", req, &resp, %v)\n", execFnName, x.httpURI, x.needsAccessToken)
-	e.e("if err != nil {\n")
-	// TODO: error_chain
-	e.e("return %s{}, err\n", x.respType)
-	e.e("}\n")
-	e.e("\n")
-	e.e("return resp, nil\n")
+
+	if x.method == apiMethodGETBinary {
+		e.e("return %s(c, \"%s\", req, %v)\n", execFnName, x.httpURI, x.needsAccessToken)
+	} else {
+		e.e("var resp %s\n", x.respType)
+		e.e("err := %s(c, \"%s\", req, &resp, %v)\n", execFnName, x.httpURI, x.needsAccessToken)
+		e.e("if err != nil {\n")
+		// TODO: error_chain
+		e.e("return %s{}, err\n", x.respType)
+		e.e("}\n")
+		e.e("\n")
+		e.e("return resp, nil\n")
+	}
+
 	e.e("}\n")
 	e.e("\n")
 

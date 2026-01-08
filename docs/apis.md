@@ -1,3 +1,9 @@
+# 全局声明
+
+```go
+import "io"
+```
+
 # Access token 获取
 
 ## API calls
@@ -124,8 +130,8 @@ Name|Request Type|Response Type|Access Token|URL|Doc
 
 Name|Request Type|Response Type|Access Token|URL|Doc
 :---|------------|-------------|------------|:--|:--
-`execAgentGet`|TODO|TODO|+|`GET /cgi-bin/agent/get`|[获取指定的应用详情](https://work.weixin.qq.com/api/doc#90000/90135/90227)
-`execAgentList`|TODO|TODO|+|`GET /cgi-bin/agent/list`|[获取access_token对应的应用列表](https://work.weixin.qq.com/api/doc#90000/90135/90227)
+`execAgentGet`|`reqAgentGet`|`respAgentGet`|+|`GET /cgi-bin/agent/get`|[获取指定的应用详情](https://work.weixin.qq.com/api/doc#90000/90135/90227)
+`execAgentList`|`reqAgentList`|`respAgentList`|+|`GET /cgi-bin/agent/list`|[获取access_token对应的应用列表](https://work.weixin.qq.com/api/doc#90000/90135/90227)
 `execAgentSet`|TODO|TODO|+|`POST /cgi-bin/agent/set`|[设置应用](https://work.weixin.qq.com/api/doc#90000/90135/90228)
 
 # 应用管理 - 自定义菜单
@@ -158,7 +164,7 @@ Name|Request Type|Response Type|Access Token|URL|Doc
 :---|------------|-------------|------------|:--|:--
 `execMediaUpload`|`reqMediaUpload`|`respMediaUpload`|+|`POST(media) /cgi-bin/media/upload`|[上传临时素材](https://work.weixin.qq.com/api/doc#90000/90135/90253)
 `execMediaUploadImg`|`reqMediaUploadImg`|`respMediaUploadImg`|+|`POST(media) /cgi-bin/media/uploadimg`|[上传永久图片](https://work.weixin.qq.com/api/doc#90000/90135/90256)
-`execMediaGet`|`reqMediaGet`|`io.ReadCloser`|+|`GET /cgi-bin/media/get`|[获取临时素材](https://work.weixin.qq.com/api/doc#90000/90135/90254)
+`execMediaGet`|`reqMediaGet`|`io.ReadCloser`|+|`GET(binary) /cgi-bin/media/get`|[获取临时素材](https://work.weixin.qq.com/api/doc#90000/90135/90254)
 `execMediaGetJSSDK`|TODO|TODO|+|`GET /cgi-bin/media/get/jssdk`|[获取高清语音素材](https://work.weixin.qq.com/api/doc#90000/90135/90255)
 
 # OA 数据接口
@@ -288,3 +294,11 @@ Name|Request Type|Response Type|Access Token|URL|Doc
 `execKfSyncMsg`|`reqKfSyncMsg`|`respKfSyncMsg`|+|`POST /cgi-bin/kf/sync_msg`|[读取消息](https://developer.work.weixin.qq.com/document/path/94670)
 `execKfSend`|`reqMessage`|`respMessageSend`|+|`POST /cgi-bin/kf/send_msg`|[发送消息](https://developer.work.weixin.qq.com/document/path/94677)
 `execKfOnEventSend`|`reqMessage`|`respMessageSend`|+|`POST /cgi-bin/kf/send_msg_on_event`|[发送欢迎语等事件响应消息](https://developer.work.weixin.qq.com/document/path/95122)
+
+# 微信客服 - 其他基础信息获取
+
+## API calls
+
+Name|Request Type|Response Type|Access Token|URL|Doc
+:---|------------|-------------|------------|:--|:--
+`execKfCustomerBatchGet`|`reqKfCustomerBatchGet`|`respKfCustomerBatchGet`|+|`POST /cgi-bin/kf/customer/batchget`|[获取客户基础信息](https://developer.work.weixin.qq.com/document/path/95159)
